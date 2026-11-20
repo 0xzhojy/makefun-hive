@@ -4,6 +4,8 @@ const median = (a: number[]) => {
   const s = [...a].sort((x, y) => x - y), i = Math.floor(s.length / 2);
   return s.length % 2 ? s[i] : (s[i - 1] + s[i]) / 2;
 };
+// These published defaults also initialize the dashboard's scenario controls.
+export const MODEL_DEFAULTS = { momentum_weight: 0.5, maturity_floor: 0.75, maturity_days: 730, unknown_age_days: 365 };
 const noToken = (p: any) => !p.gecko_id && !p.symbol && !(p.mcap_usd > 0);
 function plan(p: any, age: number | null): string[] {
   const chain = p.chains[0] || 'the supported chain';
@@ -43,5 +45,5 @@ export function build(snapshot: any) {
   }).sort((a: any,b: any) => b.implied_value_usd - a.implied_value_usd || a.slug.localeCompare(b.slug));
   rows.forEach((r: any, i: number) => r.rank = i + 1);
   const live = snapshot.protocols.filter((p: any) => !noToken(p) && !watch.has(p.slug)).map((p: any) => ({...p, implied_value_usd: p.mcap_usd > 0 ? p.mcap_usd : null})).sort((a: any,b: any) => (b.mcap_usd || 0) - (a.mcap_usd || 0));
-  return {as_of: snapshot.as_of, source: snapshot.source, watchlist_size: watch.size, rows, live};
+  return {as_of: snapshot.as_of, source: snapshot.source, watchlist_size: watch.size, model_defaults: MODEL_DEFAULTS, rows, live};
 }
